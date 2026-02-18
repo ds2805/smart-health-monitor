@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+
+<h3>All Users</h3>
+{% for u in users %}
+<p>{{ u.name }} - {{ u.email }}</p>
+{% endfor %}
+
+<h3>All Health Records</h3>
+{% for r in records %}
+<p>User ID: {{ r.user_id }} | Weight: {{ r.weight }}</p>
+{% endfor %}
+{% endblock %}

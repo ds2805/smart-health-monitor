@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 py-12">
+
+    <div class="max-w-5xl mx-auto px-6">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-4xl font-bold text-gray-800">
+                Add Health Record
+            </h1>
+
+            <a href="/dashboard"
+               class="text-indigo-600 font-semibold hover:underline">
+               ← Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Card -->
+        <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-white/40">
+
+            <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Weight -->
+                <div>
+                    <label class="block text-gray-600 font-medium mb-2">
+                        Weight (kg)
+                    </label>
+                    <input type="number" step="0.1" name="weight"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                        placeholder="Enter weight"
+                        required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-600 font-medium mb-2">
+                    Height (meters)
+                </label>
+                <input type="number" step="0.01" name="height"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    placeholder="1.75"
+                    required>
+                </div>
+
+                <!-- Systolic -->
+                <div>
+                    <label class="block text-gray-600 font-medium mb-2">
+                        Systolic BP
+                    </label>
+                    <input type="number" name="systolic"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                        placeholder="120"
+                        required>
+                </div>
+
+                <!-- Diastolic -->
+                <div>
+                    <label class="block text-gray-600 font-medium mb-2">
+                        Diastolic BP
+                    </label>
+                    <input type="number" name="diastolic"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                        placeholder="80"
+                        required>
+                </div>
+
+                <!-- Sugar -->
+                <div>
+                    <label class="block text-gray-600 font-medium mb-2">
+                        Blood Sugar
+                    </label>
+                    <input type="number" step="0.1" name="sugar"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                        placeholder="Enter sugar level"
+                        required>
+                </div>
+
+                <!-- Water -->
+                <div class="md:col-span-2">
+                    <label class="block text-gray-600 font-medium mb-2">
+                        Water Intake (Litres)
+                    </label>
+                    <input type="number" step="0.1" name="water"
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                        placeholder="2.5"
+                        required>
+                </div>
+
+                <!-- Submit -->
+                <div class="md:col-span-2 text-right mt-4">
+                    <button type="submit"
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition duration-300">
+                        Save Record
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

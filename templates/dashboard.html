@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="space-y-12">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-800">Health Dashboard</h1>
+
+        <div class="flex gap-3">
+            <a href="/add"
+               class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">
+                + Add Record
+            </a>
+
+            <a href="/download-report"
+               class="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition">
+                Download PDF
+            </a>
+
+            <a href="/logout"
+               class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition">
+                Logout
+            </a>
+        </div>
+    </div>
+
+
+    {% if latest %}
+    <div class="grid md:grid-cols-3 gap-8 items-center">
+
+        <!-- Summary Cards -->
+        <div class="md:col-span-2 grid grid-cols-2 gap-6">
+
+            <div class="bg-white p-5 rounded-2xl shadow text-center">
+                <p class="text-gray-500 text-sm">BMI</p>
+                <p class="text-2xl font-bold">{{ latest.bmi }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow text-center">
+                <p class="text-gray-500 text-sm">Blood Pressure</p>
+                <p class="text-2xl font-bold">
+                    {{ latest.systolic }}/{{ latest.diastolic }}
+                </p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow text-center">
+                <p class="text-gray-500 text-sm">Sugar</p>
+                <p class="text-2xl font-bold">{{ latest.sugar }}</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow text-center">
+                <p class="text-gray-500 text-sm">Water Intake</p>
+                <p class="text-2xl font-bold">{{ latest.water }} L</p>
+            </div>
+
+        </div>
+
+        <!-- Health Score Gauge -->
+        <div class="bg-white rounded-2xl shadow p-6 text-center relative">
+            <h2 class="text-lg font-semibold mb-4">Health Score</h2>
+
+            <div class="h-48 relative">
+                <canvas id="healthGauge"></canvas>
+
+                <!-- Score Text Center -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-3xl font-bold text-gray-700">
+                        {{ health_score }}%
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+
+    <!-- Alerts -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">
+            Health Alerts
+        </h2>
+
+        {% if alerts %}
+            {% for alert in alerts %}
+                <div class="bg-red-100 text-red-700 p-3 rounded-lg mb-2">
+                    {{ alert }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="bg-green-100 text-green-700 p-3 rounded-lg">
+                ✅ You are doing great! No risks detected.
+            </div>
+        {% endif %}
+    </div>
+
+
+    <!-- Charts -->
+    {% if records %}
+    <div class="grid md:grid-cols-2 gap-8">
+
+        <div class="bg-white rounded-2xl shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 text-center">
+                Weight Trend
+            </h2>
+            <div class="h-64">
+                <canvas id="weightChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow p-6">
+            <h2 class="text-lg font-semibold mb-4 text-center">
+                Sugar Trend
+            </h2>
+            <div class="h-64">
+                <canvas id="sugarChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+    {% endif %}
+
+
+    <!-- Records Table -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">
+            Your Records
+        </h2>
+
+        {% if records %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm text-gray-600">
+                <thead class="bg-indigo-100 text-gray-700">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Date & Time</th>
+                        <th class="py-3 px-4 text-left">Weight</th>
+                        <th class="py-3 px-4 text-left">BMI</th>
+                        <th class="py-3 px-4 text-left">BP</th>
+                        <th class="py-3 px-4 text-left">Sugar</th>
+                        <th class="py-3 px-4 text-left">Water</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in records %}
+                    <tr class="border-b hover:bg-gray-50 transition">
+                        <td class="py-3 px-4">
+                            {{ r.date.strftime('%Y-%m-%d %H:%M') }}
+                        </td>
+                        <td class="py-3 px-4">{{ r.weight }} kg</td>
+                        <td class="py-3 px-4">{{ r.bmi }}</td>
+                        <td class="py-3 px-4">
+                            {{ r.systolic }}/{{ r.diastolic }}
+                        </td>
+                        <td class="py-3 px-4">{{ r.sugar }}</td>
+                        <td class="py-3 px-4">{{ r.water }} L</td>
+                        <td class="py-3 px-4 space-x-2">
+                            <a href="/edit/{{ r.id }}"
+                               class="text-blue-600 font-semibold hover:underline">
+                                Edit
+                            </a>
+
+                            <a href="/delete/{{ r.id }}"
+                               class="text-red-600 font-semibold hover:underline"
+                               onclick="return confirm('Are you sure?')">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No records yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+
+{% if records %}
+<script>
+
+var labels = [{% for r in records %}"{{ r.date.strftime('%m-%d') }}",{% endfor %}];
+var weights = [{% for r in records %}{{ r.weight }},{% endfor %}];
+var sugars = [{% for r in records %}{{ r.sugar }},{% endfor %}];
+
+// Weight Chart
+new Chart(document.getElementById('weightChart'), {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: weights,
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79,70,229,0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Sugar Chart
+new Chart(document.getElementById('sugarChart'), {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            data: sugars,
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239,68,68,0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Health Score Gauge
+new Chart(document.getElementById('healthGauge'), {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: [{{ health_score }}, 100 - {{ health_score }}],
+            backgroundColor: ['#10b981', '#e5e7eb'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '70%',
+        plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+        },
+        animation: {
+            animateRotate: true,
+            duration: 1500
+        }
+    }
+});
+
+</script>
+{% endif %}
+
+{% endblock %}
